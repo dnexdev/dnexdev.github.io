@@ -2,10 +2,19 @@
 
 {% block content %}
     <h1>devlog</h1>
-    <ul>
+    <div class="bio">
+        <img src="/static/avatar.jpg" alt="avatar" class="avatar">
+        <div>
+            <h1>hi i'm nex!!!</h1>
+            <p>welcome to my devlog, right now I'm working on creating an LLM from scratch and a chess engine!.</p>
+            <p>Reach out at me@dnex.dev</p>
+        </div>
+    </div>
+    <ul class="post-list">
         {% for post in posts %}
         <li>
-            <span>{{ post.date }}</span> - <a href="{{ post.url }}">{{ post.title }}</a>
+            <span class="post-date">{{ post.date }}</span>
+            <a href="{{ post.url }}">{{ post.title }}</a>
         </li>
         {% endfor %}
     </ul>
