@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>cafe</title>
+    <link href="https://dnex.dev/" rel="alternate"/>
+    <link href="https://dnex.dev/atom.xml" rel="self"/>
+    <id>https://dnex.dev</id>
+    <updated>2026-06-20T03:37:13Z</updated>
+
+    
+    <entry>
+        <title>let's make an LLM part 1 'overview'</title>
+        <link href="https://dnex.dev/llms1/" rel="alternate"/>
+        <id>https://dnex.dev/llms1/</id>
+        <updated>2026-06-19T00:00:00Z</updated>
+        <published>2026-06-19T00:00:00Z</published>
+        <summary>let's make an LLM part 1 'overview'</summary>
+    </entry>
+    
+    <entry>
+        <title>Making a blog</title>
+        <link href="https://dnex.dev/makingadevlog/" rel="alternate"/>
+        <id>https://dnex.dev/makingadevlog/</id>
+        <updated>2026-06-11T00:00:00Z</updated>
+        <published>2026-06-11T00:00:00Z</published>
+        <summary>Making a blog</summary>
+    </entry>
+    
+    <entry>
+        <title>Favourite Anime</title>
+        <link href="https://dnex.dev/anime/" rel="alternate"/>
+        <id>https://dnex.dev/anime/</id>
+        <updated>2026-06-10T00:00:00Z</updated>
+        <published>2026-06-10T00:00:00Z</published>
+        <summary>Favourite Anime</summary>
+    </entry>
+    
+</feed>
