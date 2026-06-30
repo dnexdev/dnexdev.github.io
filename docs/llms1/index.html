@@ -6,6 +6,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>let's make an LLM part 1 'overview'</title>
         <link rel="stylesheet" href="/static/style.css">
+
+        <script>
+            if (window.location.pathname.endsWith('/index.html') || window.location.pathname === '/index.html') {
+                const cleanUrl = window.location.protocol + "//" + window.location.host + "/";
+                window.location.replace(cleanUrl);
+            }
+        </script>
     </head>
     <body>
         
@@ -16,9 +23,37 @@
 <p>We won't be anywhere NEAR making an LLM for a while. 
 We first need to construct a machine learning framework.</p>
 
-<p>Our ML framework will be a simple tensor + autograd library.</p>
+<p>The framework will be written in C++ with no dependencies on PyTorch, TensorFlow, or any other ML library.
+The only dependencies I will be using are GoogleTest for testing, pybind11 for Python bindings, and the CUDA toolkit for the GPU backend.</p>
 
-<p>the rest of this article is under construction...</p>
+<p>All you need is just basic programming proficiency in C++ to follow along.</p>
+
+<h2>Preview</h2>
+
+<ul>
+<li><strong>Part 2 - Storage and Tensor</strong>: Strides, transpose</li>
+<li><strong>Part 3 - Ops</strong>: Broadcasting rules, naive matmul (matrix multiplication), gradient checker</li>
+<li><strong>Part 4 - Autograd</strong>: </li>
+<li><strong>Part 5 - Optimizing matmul</strong>:</li>
+<li><strong>Part 6 - Neural network modules and MNIST</strong>: Linear, Adam, cross-entropy</li>
+<li><strong>Part 7 - Transformer</strong>: Attention, layernorm, GPT</li>
+<li><strong>Part 8 - CUDA</strong>: Kernels</li>
+<li><strong>Part 9 - Cleaning up</strong>: </li>
+<li><strong>Part 10 - Training Shakespeare</strong>: </li>
+<li><strong>Part 11 - Tokenizer and data pipeline</strong>:</li>
+<li><strong>Part 12 - More modern architecture choices and mixed precision</strong>:</li>
+<li><strong>Part 13 - Flash Attention</strong>:</li>
+<li><strong>Part 14 - KV cache, sampling, and eval harness</strong>:</li>
+<li><strong>Part 15 - Training recipe and a real run</strong>:</li>
+<li><strong>Part 16 - Fused kernels</strong>:</li>
+<li><strong>Part 17 - Flash Attention</strong>:</li>
+<li><strong>Part 18 - Tensor core matmul</strong>:</li>
+<li><strong>Part 19 - Ring all-reduce and DDP</strong>:</li>
+<li><strong>Part 20 - Activation checkpointing</strong>:</li>
+<li>???</li>
+</ul>
+
+<p>The actual code is at <a href="https://github.com/denexdev/tiramisu">github.com/dnexdev/tiramisu</a>. </p>
 
 
     </body>

@@ -6,6 +6,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>devlog</title>
         <link rel="stylesheet" href="/static/style.css">
+
+        <script>
+            if (window.location.pathname.endsWith('/index.html') || window.location.pathname === '/index.html') {
+                const cleanUrl = window.location.protocol + "//" + window.location.host + "/";
+                window.location.replace(cleanUrl);
+            }
+        </script>
     </head>
     <body>
         
@@ -28,18 +35,13 @@
     <ul class="post-list">
         
         <li>
+            <span class="post-date">2026-06-30</span>
+            <a href="llms2/">let's make an LLM part 2 'Storage and Tensor'</a>
+        </li>
+        
+        <li>
             <span class="post-date">2026-06-19</span>
             <a href="llms1/">let's make an LLM part 1 'overview'</a>
-        </li>
-        
-        <li>
-            <span class="post-date">2026-06-11</span>
-            <a href="makingadevlog/">Making a blog</a>
-        </li>
-        
-        <li>
-            <span class="post-date">2026-06-10</span>
-            <a href="anime/">Favourite Anime</a>
         </li>
         
     </ul>
