@@ -37,4 +37,4 @@ All you need is just basic programming proficiency in C++ to follow along.
 - ???
 
 
-The actual code is at [github.com/dnexdev/tiramisu](https://github.com/denexdev/tiramisu). 
+The actual code is at [github.com/dnexdev/tiramisu](https://github.com/dnexdev/tiramisu). 
