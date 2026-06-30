@@ -15,14 +15,14 @@ The only dependencies I will be using are GoogleTest for testing, pybind11 for P
 All you need is just basic programming proficiency in C++ to follow along.
 
 ## Preview
-- **Part 2 - Storage and Tensor**: Strides, transpose
-- **Part 3 - Ops**: Broadcasting rules, naive matmul (matrix multiplication), gradient checker
-- **Part 4 - Autograd**: 
-- **Part 5 - Optimizing matmul**:
-- **Part 6 - Neural network modules and MNIST**: Linear, Adam, cross-entropy
-- **Part 7 - Transformer**: Attention, layernorm, GPT
-- **Part 8 - CUDA**: Kernels
-- **Part 9 - Cleaning up**: 
+- **Part 02 - Storage and Tensor**: Strides, transpose
+- **Part 03 - Ops**: Broadcasting rules, naive matmul (matrix multiplication), gradient checker
+- **Part 04 - Autograd**: 
+- **Part 05 - Optimizing matmul**:
+- **Part 06 - Neural network modules and MNIST**: Linear, Adam, cross-entropy
+- **Part 07 - Transformer**: Attention, layernorm, GPT
+- **Part 08 - CUDA**: Kernels
+- **Part 09 - Cleaning up**: 
 - **Part 10 - Training Shakespeare**: 
 - **Part 11 - Tokenizer and data pipeline**:
 - **Part 12 - More modern architecture choices and mixed precision**:
