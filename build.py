@@ -42,7 +42,12 @@ for entry in os.scandir(posts):
         tags = ast.literal_eval(frontmatter[2].split(":")[1].lstrip())
 
         blogtext = arr[2].lstrip()
-        output = markdown2.markdown(blogtext, extras=["fenced-code-blocks"])
+        output = markdown2.markdown(
+            blogtext,
+            extras={
+                "fenced-code-blocks": {"noclasses": True},
+            },
+        )
     
     out_post_dir = os.path.join(save_path, post_folder)
     os.makedirs(out_post_dir, exist_ok=True)
