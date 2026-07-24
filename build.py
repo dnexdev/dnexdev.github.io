@@ -1,6 +1,7 @@
 import os
 import markdown2
 import shutil
+import ast
 from jinja2 import Environment, FileSystemLoader
 from datetime import datetime, timezone
 
@@ -30,16 +31,18 @@ for entry in os.scandir(posts):
 
     with open(md_path, "r") as f:
         content = f.read()
-        arr = content.split("---")
+        arr = content.split("---", 2)
+        if len(arr) != 3:
+            raise ValueError(f"Invalid frontmatter format in {md_path}")
 
         frontmatter = arr[1].splitlines()[1::]
 
         title = frontmatter[0].split(":")[1].lstrip()[1:-1] 
         date = frontmatter[1].split(":")[1].lstrip()
-        tags = eval(frontmatter[2].split(":")[1].lstrip())
+        tags = ast.literal_eval(frontmatter[2].split(":")[1].lstrip())
 
         blogtext = arr[2].lstrip()
-        output = markdown2.markdown(blogtext)
+        output = markdown2.markdown(blogtext, extras=["fenced-code-blocks"])
     
     out_post_dir = os.path.join(save_path, post_folder)
     os.makedirs(out_post_dir, exist_ok=True)
