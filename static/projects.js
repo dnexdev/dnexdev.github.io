@@ -1,6 +1,7 @@
 (() => {
   const carousel = document.querySelector("[data-carousel]");
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduceMotionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let reduceMotion = reduceMotionMq.matches;
 
   function setupHeroCopy() {
     if (!carousel) return;
@@ -169,6 +170,16 @@
     });
 
     setActive(index);
+
+    const onMotionPreferenceChange = (event) => {
+      reduceMotion = event.matches;
+      setActive(index);
+    };
+    if (typeof reduceMotionMq.addEventListener === "function") {
+      reduceMotionMq.addEventListener("change", onMotionPreferenceChange);
+    } else if (typeof reduceMotionMq.addListener === "function") {
+      reduceMotionMq.addListener(onMotionPreferenceChange);
+    }
   }
 
   setupHeroCopy();

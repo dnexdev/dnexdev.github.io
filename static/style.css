@@ -579,12 +579,6 @@ main.page-home {
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .scroll-cue-icon {
-        animation: none;
-    }
-}
-
 /* —— sections —— */
 .blog-teaser {
     max-width: var(--site-max);
@@ -861,7 +855,21 @@ main.page-home {
         scroll-behavior: auto;
     }
 
-    .carousel-slide {
-        transition: none;
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0s !important;
+        scroll-behavior: auto !important;
+    }
+
+    .scroll-cue-icon {
+        animation: none;
+    }
+
+    .hero-copy.is-dismissed {
+        transform: none;
     }
 }
