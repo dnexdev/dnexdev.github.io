@@ -1,2 +1,6 @@
 .venv
 docs/
+.tmp-media/
+media-src/
+*.MOV
+*.mov

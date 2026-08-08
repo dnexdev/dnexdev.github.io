@@ -1,9 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}{{ log_title }}{% endblock %}
+{% block title %}{{ log_title }} · dnex{% endblock %}
+
+{% block main_class %}page-post{% endblock %}
 
 {% block content %}
-    <a href="../">← Back</a>
+<article class="post">
+    <a class="back-link" href="/blog/">← Blog</a>
     <h1>{{ log_title }}</h1>
-    {{ page }}
+    <div class="post-body">
+        {{ page }}
+    </div>
+</article>
 {% endblock %}
