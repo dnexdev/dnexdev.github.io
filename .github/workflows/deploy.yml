@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,16 +25,11 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
+      - name: Install C++20 & WebAssembly toolchain
+        run: sudo apt-get update && sudo apt-get install -y clang lld
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Build site
-        run: python build.py
+      - name: Build WASM simulation & static site
+        run: make
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -45,7 +40,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: build
     steps:
       - name: Deploy to GitHub Pages

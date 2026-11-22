@@ -1,5 +1,8 @@
-.venv
+bin/
 docs/
+.docs-tmp/
+static/sim.wasm
+.venv
 .tmp-media/
 media-src/
 *.MOV
