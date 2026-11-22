@@ -499,7 +499,7 @@ std::string render_now_body(const SiteConfig& site) {
       << "        <h1>Now</h1>\n"
       << "        <p class=\"now-date\">" << escape_html(format_date_spaced(site.now_updated)) << "</p>\n";
   for (const auto& para : site.now_paragraphs) {
-    out << "        <p>" << escape_html(para) << "</p>\n";
+    out << "        <p>" << render_bio_line(site, para) << "</p>\n";
   }
   out << "        <p class=\"now-footnote\">inspired by <a href=\"https://nownownow.com/about\" target=\"_blank\" rel=\"noopener noreferrer\">nownownow</a></p>\n"
       << "      </article>\n";
@@ -536,7 +536,7 @@ std::string render_llms_txt(const SiteConfig& site, const std::vector<Project>& 
     out << "- " << p.title << ": " << p.tagline << " (" << primary << ")\n";
   }
   out << "\n## Now (" << site.now_updated << ")\n\n";
-  for (const auto& para : site.now_paragraphs) out << para << "\n\n";
+  for (const auto& para : site.now_paragraphs) out << plain_bio_line(site, para) << "\n\n";
   return out.str();
 }
 
