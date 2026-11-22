@@ -1,71 +1,48 @@
-# Portfolio project data — edit here, then run `python build.py`
-# Drop real muted looping clips under static/projects/<slug>.{mp4,webm,gif}
-# and set `media.video` / `media.poster` accordingly.
-
-hero:
-  brand: peter / nex
-  headline: I like ML!!
-  support: coding close to the metal
-  cta_github: https://github.com/dnexdev
-  cta_email: mailto:me@dnex.dev
-
 projects:
   - slug: tiramisu
     title: tiramisu
     featured: true
+    short: c++20 ml framework
     tagline: C++20 ML framework with a PyTorch-like Python API — tensors, autograd, transformers, CUDA.
     stat: "~5000 lines of C++"
-    stat_label: lines of C++
     tags: [C++, Python, CUDA, ML]
-    links:
-      github: https://github.com/dnexdev/tiramisu
-      live: https://tiramisu.dnex.dev
-    media:
-      video: /static/projects/tiramisu.mp4
-      poster: /static/projects/tiramisu.jpg
-      placeholder: WASM / train demo clip
+    github: https://github.com/dnexdev/tiramisu
+    live: https://tiramisu.dnex.dev
+    video: /static/projects/tiramisu.mp4
+    poster: /static/projects/tiramisu.jpg
 
   - slug: buzzkill
     title: buzzkill
     featured: true
+    short: cv turret · hackthe6ix
     tagline: Autonomous mosquito-tracking turret — computer vision that aims and fires.
     stat: finalist @ hackthe6ix
-    stat_label: hackathon
     tags: [CV, Python, hardware]
-    links:
-      github: https://github.com/dnexdev/buzzkill
-      live: https://www.youtube.com/watch?v=bvb7n03Mdh0
-    media:
-      video: /static/projects/buzzkill.mp4
-      poster: /static/projects/buzzkill.jpg
-      placeholder: turret tracking / firing footage
+    github: https://github.com/dnexdev/buzzkill
+    live: https://www.youtube.com/watch?v=bvb7n03Mdh0
+    video: /static/projects/buzzkill.mp4
+    poster: /static/projects/buzzkill.jpg
 
   - slug: openintern
     title: openintern
     featured: true
+    short: open internship corpus
     tagline: Open tech-internship corpus — free API, no-account board, community company registry.
-    stat: free
-    stat_label: forever · no paywall
+    stat: free · no paywall
     tags: [TypeScript, Next.js, data]
-    links:
-      github: https://github.com/dnexdev/openintern
-      live: https://openintern.dev
-    media:
-      video: /static/projects/openintern.mp4
-      poster: /static/projects/openintern.jpg
-      placeholder: board / API UI capture
+    github: https://github.com/dnexdev/openintern
+    live: https://openintern.dev
+    video: /static/projects/openintern.mp4
+    poster: /static/projects/openintern.jpg
 
   - slug: mathphic
     title: mathphic
     featured: true
+    short: agents · hackcanada
     tagline: 3Blue1Brown-style math explanations via a Desmos + multi-agent pipeline.
     stat: winner @ hackcanada
-    stat_label: hackathon
     tags: [TypeScript, agents, Desmos]
-    links:
-      github: https://github.com/dnexdev/mathphic
-      live: https://www.youtube.com/watch?v=7JP_n-fGjhM
-    media:
-      video: /static/projects/mathphic.mp4
-      poster: /static/projects/mathphic.jpg
-      placeholder: Desmos viz demo
+    github: https://github.com/dnexdev/mathphic
+    live: https://www.youtube.com/watch?v=7JP_n-fGjhM
+    video: /static/projects/mathphic.mp4
+    poster: /static/projects/mathphic.jpg

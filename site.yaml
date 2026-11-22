@@ -1,0 +1,22 @@
+name: nex
+handle: nex
+site_url: https://dnex.dev
+description: "{cs, math} @ uwaterloo "
+email: me@dnex.dev
+github: https://github.com/dnexdev
+x: https://x.com/dnexdev
+linkedin: https://www.linkedin.com/in/p-rong/
+repo: https://github.com/dnexdev/dnexdev.github.io
+
+quote: "i love the world and everything in it"
+greeting: "Hey, I'm Peter"
+bio:
+  - "{cs, math} @ uwaterloo"
+  - "Currently a Member of Technical Staff @ MyPip. Previously SWE @ Stealth"
+
+now:
+  updated: "Fall 2026"
+  paragraphs:
+    - "Currently on my 2A studying CS and math at the University of Waterloo."
+    - "Outside classes, I'm working as a MTS at MyPip"
+    - "Spending my free time learning as much as I can about machine learning and inference."
