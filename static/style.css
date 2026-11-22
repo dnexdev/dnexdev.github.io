@@ -14,6 +14,10 @@
   --pill-bg-hover: rgba(0, 0, 0, 0.80);
   --pill-fg: #f1eee7;
   --mobile-pill: rgba(241, 238, 231, 0.09);
+  --card-bg: color-mix(in srgb, #181715 93%, #f1eee7);
+  --card-border: rgba(241, 238, 231, 0.09);
+  --card-divider: rgba(241, 238, 231, 0.07);
+  --card-shadow: inset 0 1px 0 rgba(241, 238, 231, 0.06), 0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 40px -12px rgba(0, 0, 0, 0.6);
   --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   color-scheme: dark;
@@ -31,6 +35,10 @@ html[data-theme="light"] {
   --pill-bg-hover: rgba(20, 19, 18, 0.82);
   --pill-fg: #f5f4f1;
   --mobile-pill: rgba(26, 25, 23, 0.08);
+  --card-bg: color-mix(in srgb, #f5f4f1 45%, #ffffff);
+  --card-border: rgba(26, 25, 23, 0.11);
+  --card-divider: rgba(26, 25, 23, 0.08);
+  --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 1px 2px rgba(38, 37, 35, 0.06), 0 12px 32px -12px rgba(38, 37, 35, 0.18);
   color-scheme: light;
 }
 
@@ -47,6 +55,10 @@ html[data-theme="light"] {
     --pill-bg-hover: rgba(20, 19, 18, 0.82);
     --pill-fg: #f5f4f1;
     --mobile-pill: rgba(26, 25, 23, 0.08);
+    --card-bg: color-mix(in srgb, #f5f4f1 45%, #ffffff);
+    --card-border: rgba(26, 25, 23, 0.11);
+    --card-divider: rgba(26, 25, 23, 0.08);
+    --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 1px 2px rgba(38, 37, 35, 0.06), 0 12px 32px -12px rgba(38, 37, 35, 0.18);
     color-scheme: light;
   }
 }
@@ -295,6 +307,173 @@ main.page-home {
   opacity: 0.4;
   user-select: none;
   margin: 0 0.15rem;
+}
+
+/* —— Inline citation link + hover card (daoho.dev style) —— */
+.cite {
+  position: relative;
+  display: inline;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* underline spans the logo + name (text-decoration skips images) */
+.cite::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--cite-underline-bottom, -2px);
+  height: 1px;
+  background: var(--underline);
+  pointer-events: none;
+  transition: background-color 0.15s ease;
+}
+
+.cite:hover::after,
+.cite:focus-visible::after {
+  background: var(--fg);
+}
+
+.cite:focus-visible::after {
+  height: 2px;
+}
+
+.cite-logo {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+  vertical-align: -2px;
+  user-select: none;
+}
+
+.cite:focus-visible {
+  outline: none;
+}
+
+.cite-card {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  z-index: 50;
+  width: 300px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  white-space: normal;
+  text-align: left;
+  transform-origin: bottom left;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(4px) scale(0.98);
+  /* close quickly, open after a short hover intent delay */
+  transition: opacity 0.08s ease-in, transform 0.08s ease-in, visibility 0s linear 0.11s;
+}
+
+/* invisible bridge so the pointer can travel from the link into the card */
+.cite-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 12px;
+}
+
+.cite:hover .cite-card,
+.cite:focus-visible .cite-card {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition: opacity 0.12s ease-out 0.055s, transform 0.12s ease-out 0.055s, visibility 0s linear 0.055s;
+}
+
+.cite-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 0;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.cite-card-logo {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.cite-card-name {
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cite-dates {
+  margin-left: auto;
+  padding-left: 0.5rem;
+  flex: none;
+  opacity: 0.4;
+  font-variant-numeric: tabular-nums;
+}
+
+.cite-role {
+  padding: 10px 14px 0;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.cite-summary {
+  padding: 6px 14px 12px;
+  font-size: 12px;
+  line-height: 18px;
+  opacity: 0.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cite-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-top: 1px solid var(--card-divider);
+  font-size: 11px;
+  line-height: 1;
+  opacity: 0.4;
+  transition: opacity 0.15s ease;
+}
+
+.cite-card:hover .cite-foot {
+  opacity: 0.7;
+}
+
+/* touch / narrow screens: just the logo + link, no hover card */
+@media (hover: none), (max-width: 768px) {
+  .cite-card {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cite-card,
+  .cite:hover .cite-card,
+  .cite:focus-visible .cite-card {
+    transform: none;
+    transition: visibility 0s;
+  }
 }
 
 /* —— Projects (daoho.dev exact horizontal left-right rail on desktop) —— */

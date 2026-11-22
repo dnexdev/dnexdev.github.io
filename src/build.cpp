@@ -13,6 +13,18 @@ namespace fs = std::filesystem;
 
 namespace {
 
+// Inline "citation" link with a hover card (logo, role, dates, summary).
+// Referenced from bio text as {key}.
+struct Cite {
+  std::string key;
+  std::string name;
+  std::string href;
+  std::string icon;
+  std::string role;
+  std::string dates;
+  std::string summary;
+};
+
 struct SiteConfig {
   std::string name;
   std::string handle;
@@ -28,6 +40,7 @@ struct SiteConfig {
   std::vector<std::string> bio;
   std::string now_updated;
   std::vector<std::string> now_paragraphs;
+  std::vector<Cite> cites;
 };
 
 struct Project {
@@ -184,7 +197,7 @@ std::string format_date_spaced(std::string iso) {
 SiteConfig parse_site_yaml(const fs::path& path) {
   SiteConfig cfg;
   auto lines = split_lines(read_file(path));
-  enum class Section { Root, Bio, Now, NowParagraphs };
+  enum class Section { Root, Bio, Now, NowParagraphs, Cites };
   Section sec = Section::Root;
 
   for (const auto& raw : lines) {
@@ -196,6 +209,7 @@ SiteConfig parse_site_yaml(const fs::path& path) {
       auto [k, v] = split_kv(t);
       if (k == "bio") { sec = Section::Bio; continue; }
       if (k == "now") { sec = Section::Now; continue; }
+      if (k == "cites") { sec = Section::Cites; continue; }
       sec = Section::Root;
       v = unquote(v);
       if (k == "name") cfg.name = v;
@@ -211,6 +225,22 @@ SiteConfig parse_site_yaml(const fs::path& path) {
       else if (k == "repo") cfg.repo = v;
     } else if (sec == Section::Bio) {
       if (t.rfind("- ", 0) == 0) cfg.bio.push_back(unquote(t.substr(2)));
+    } else if (sec == Section::Cites) {
+      if (t.rfind("- ", 0) == 0) {
+        cfg.cites.emplace_back();
+        t = trim(t.substr(2));
+      }
+      if (cfg.cites.empty()) continue;
+      auto [k, v] = split_kv(t);
+      Cite& c = cfg.cites.back();
+      v = unquote(v);
+      if (k == "key") c.key = v;
+      else if (k == "name") c.name = v;
+      else if (k == "href") c.href = v;
+      else if (k == "icon") c.icon = v;
+      else if (k == "role") c.role = v;
+      else if (k == "dates") c.dates = v;
+      else if (k == "summary") c.summary = v;
     } else if (sec == Section::Now || sec == Section::NowParagraphs) {
       if (t.rfind("- ", 0) == 0) {
         sec = Section::NowParagraphs;
@@ -322,6 +352,56 @@ std::string render_page(const SiteConfig& site,
   return out.str();
 }
 
+void replace_all(std::string& s, const std::string& from, const std::string& to) {
+  if (from.empty()) return;
+  for (size_t pos = 0; (pos = s.find(from, pos)) != std::string::npos; pos += to.size()) {
+    s.replace(pos, from.size(), to);
+  }
+}
+
+std::string render_cite(const Cite& c) {
+  std::ostringstream out;
+  out << "<a class=\"cite\" href=\"" << escape_html(c.href)
+      << "\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\""
+      << escape_html(c.role.empty() ? c.name : c.name + ", " + c.role) << "\">";
+  if (!c.icon.empty()) {
+    out << "<img class=\"cite-logo\" src=\"" << escape_html(c.icon)
+        << "\" alt=\"\" width=\"14\" height=\"14\" draggable=\"false\">";
+  }
+  out << "<span class=\"cite-name\">" << escape_html(c.name) << "</span>"
+      << "<span class=\"cite-card\" aria-hidden=\"true\">"
+      << "<span class=\"cite-head\">";
+  if (!c.icon.empty()) {
+    out << "<img class=\"cite-card-logo\" src=\"" << escape_html(c.icon)
+        << "\" alt=\"\" width=\"16\" height=\"16\">";
+  }
+  out << "<span class=\"cite-card-name\">" << escape_html(c.name) << "</span>";
+  if (!c.dates.empty()) out << "<span class=\"cite-dates\">" << escape_html(c.dates) << "</span>";
+  out << "</span>";
+  if (!c.role.empty()) out << "<span class=\"cite-role\">" << escape_html(c.role) << "</span>";
+  if (!c.summary.empty()) out << "<span class=\"cite-summary\">" << escape_html(c.summary) << "</span>";
+  out << "<span class=\"cite-foot\"><span>open site</span><span aria-hidden=\"true\">&#8599;</span></span>"
+      << "</span></a>";
+  return out.str();
+}
+
+// Escape a bio line, then swap {key} tokens for citation links.
+std::string render_bio_line(const SiteConfig& site, const std::string& text) {
+  std::string html = escape_html(text);
+  for (const auto& c : site.cites) {
+    if (!c.key.empty()) replace_all(html, "{" + c.key + "}", render_cite(c));
+  }
+  return html;
+}
+
+// Plain-text version of a bio line (for llms.txt).
+std::string plain_bio_line(const SiteConfig& site, std::string text) {
+  for (const auto& c : site.cites) {
+    if (!c.key.empty()) replace_all(text, "{" + c.key + "}", c.name + " (" + c.href + ")");
+  }
+  return text;
+}
+
 std::string render_home_body(const SiteConfig& site) {
   std::ostringstream out;
   out << "      <div class=\"home-content\" data-sim-soften=\"true\">\n";
@@ -339,7 +419,7 @@ std::string render_home_body(const SiteConfig& site) {
   out << "        <header class=\"home-prose\">\n"
       << "          <h1>" << escape_html(site.greeting) << "</h1>\n";
   for (const auto& para : site.bio) {
-    out << "          <p>" << escape_html(para) << "</p>\n";
+    out << "          <p>" << render_bio_line(site, para) << "</p>\n";
   }
   out << "          <p class=\"home-links\">\n"
       << "            <a href=\"" << escape_html(site.github) << "\" target=\"_blank\" rel=\"noopener noreferrer\">github</a>"
@@ -449,7 +529,7 @@ std::string render_llms_txt(const SiteConfig& site, const std::vector<Project>& 
       << "- LinkedIn: " << site.linkedin << "\n"
       << "- Email: " << site.email << "\n\n"
       << "## Bio\n\n";
-  for (const auto& para : site.bio) out << para << "\n\n";
+  for (const auto& para : site.bio) out << plain_bio_line(site, para) << "\n\n";
   out << "## Projects\n\n";
   for (const auto& p : projects) {
     const std::string& primary = !p.live.empty() ? p.live : p.github;

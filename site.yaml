@@ -12,7 +12,17 @@ quote: "i love the world and everything in it"
 greeting: "Hey, I'm Peter"
 bio:
   - "{cs, math} @ uwaterloo"
-  - "Currently a Member of Technical Staff @ MyPip. Previously SWE @ Stealth"
+  - "Currently a Member of Technical Staff @ {mypip}. Previously SWE @ Stealth"
+
+# Inline links with a hover card; use {key} in bio lines above.
+cites:
+  - key: mypip
+    name: MyPip
+    href: https://mypipdev.com
+    icon: /static/logos/mypip.png
+    role: Member of Technical Staff
+    dates: ""
+    summary: "The fastest way to build, customize, and launch games."
 
 now:
   updated: "Fall 2026"
