@@ -452,6 +452,8 @@ int g_is_light = 0;
 
 float text_x0 = 0.0f, text_y0 = 0.0f, text_x1 = 0.0f, text_y1 = 0.0f;
 int text_active = 0;
+float nav_x0 = 0.0f, nav_y0 = 0.0f, nav_x1 = 0.0f, nav_y1 = 0.0f;
+int nav_active = 0;
 
 float energy[MAX_CELLS];
 float energy_tmp[MAX_CELLS];
@@ -512,15 +514,21 @@ inline int pick_koi_count(float w, float h) {
   return MAX_KOI;
 }
 
-inline float content_dim_at(float px, float py) {
-  if (!text_active) return 1.0f;
+inline float rect_dim_at(float px, float py, float x0, float y0, float x1, float y1) {
   float pad = g_cw * 4.0f;
-  float dx = f_max(text_x0 - px, f_max(0.0f, px - text_x1));
-  float dy = f_max(text_y0 - py, f_max(0.0f, py - text_y1));
+  float dx = f_max(x0 - px, f_max(0.0f, px - x1));
+  float dy = f_max(y0 - py, f_max(0.0f, py - y1));
   float d = f_hypot(dx, dy);
   if (d >= pad) return 1.0f;
   // Exact Dao-Ho DIM_UNDER_CONTENT easing (gentle fade under bio text)
   return 0.22f + 0.78f * smoothstep(0.0f, pad, d);
+}
+
+inline float content_dim_at(float px, float py) {
+  float d = 1.0f;
+  if (text_active) d = rect_dim_at(px, py, text_x0, text_y0, text_x1, text_y1);
+  if (nav_active) d = f_min(d, rect_dim_at(px, py, nav_x0, nav_y0, nav_x1, nav_y1));
+  return d;
 }
 
 inline void add_ripple(float x, float y, float max_r, float alpha) {
@@ -830,6 +838,7 @@ void step_and_draw_jellies(int j_count) {
         float dist = f_hypot(bx - a.x, by - a.y);
         int steps = i_ceil(dist / (g_cw * 0.55f));
         if (steps < 1) steps = 1;
+        if (steps > 256) steps = 256; // never let a stretched segment stall the frame
         Rgb veil = mix_rgb(P.bg, ramp[3], tn.is_oral ? 0.58f : 0.46f);
         Rgb ink = shade_rgb(veil, P.ink + 0.15f);
         uint8_t gl = tn.is_oral ? ((frac > 0.55f) ? '~' : ':') : ((k % 2 == 0) ? '.' : ':');
@@ -884,7 +893,7 @@ void step_and_draw_jellies(int j_count) {
         if (!is_outer) {
           int sc = cx + sh_dc;
           int sr = cy + sh_dr;
-          if (sc < g_cols && sr < g_rows) out_shadow[sr * g_cols + sc] = 1;
+          if (sc >= 0 && sr >= 0 && sc < g_cols && sr < g_rows) out_shadow[sr * g_cols + sc] = 1;
         }
 
         // Top-left 3D dome shading + radial ribs + shimmering wet sheen
@@ -1264,7 +1273,7 @@ void step_and_draw_koi(int k_count, int j_count) {
           if (hits == 5) {
             int sc = c + shadow_dc;
             int sr = r + shadow_dr;
-            if (sc < g_cols && sr < g_rows) out_shadow[sr * g_cols + sc] = 1;
+            if (sc >= 0 && sr >= 0 && sc < g_cols && sr < g_rows) out_shadow[sr * g_cols + sc] = 1;
             tile_alpha = dim;
             if (s < 0.035f && across < 0.6f && k.gulp > 0.5f) {
               glyph = 'o';
@@ -1504,6 +1513,15 @@ void sim_set_text_rect(float x, float y, float w, float h, int active) {
   text_active = active;
 }
 
+WASM_EXPORT("sim_set_nav_rect")
+void sim_set_nav_rect(float x, float y, float w, float h, int active) {
+  nav_x0 = x;
+  nav_y0 = y;
+  nav_x1 = x + w;
+  nav_y1 = y + h;
+  nav_active = active;
+}
+
 WASM_EXPORT("sim_pointer")
 void sim_pointer(float x, float y, float vx, float vy, int active) {
   ptr_x = x;
@@ -1556,25 +1574,34 @@ WASM_EXPORT("sim_validate_restored")
 int sim_validate_restored() {
   if (state.magic != STATE_MAGIC || !f_finite(state.time) ||
       !f_finite(state.saved_width) || !f_finite(state.saved_height) ||
-      state.saved_width < 64.0f || state.saved_height < 64.0f) {
+      state.saved_width < 64.0f || state.saved_height < 64.0f ||
+      state.saved_width > 20000.0f || state.saved_height > 20000.0f) {
     return 0;
   }
+  // Everything must sit near the saved pond; huge (but finite) values would
+  // otherwise blow up rasterization loops after sim_resize remaps them.
+  const float lo_x = -state.saved_width, hi_x = 2.0f * state.saved_width;
+  const float lo_y = -state.saved_height, hi_y = 2.0f * state.saved_height;
+  auto in_x = [&](float v) { return f_finite(v) && v >= lo_x && v <= hi_x; };
+  auto in_y = [&](float v) { return f_finite(v) && v >= lo_y && v <= hi_y; };
+  auto in_abs = [](float v, float lim) { return f_finite(v) && f_abs(v) <= lim; };
   for (int i = 0; i < MAX_JELLIES; ++i) {
     Jelly& j = state.jellies[i];
-    if (!f_finite(j.x) || !f_finite(j.y) || !f_finite(j.vx) || !f_finite(j.vy) ||
-        !f_finite(j.ang) || !f_finite(j.r) || !f_finite(j.phase) || !f_finite(j.speed_mul) ||
+    if (!in_x(j.x) || !in_y(j.y) || !in_abs(j.vx, 50.0f) || !in_abs(j.vy, 50.0f) ||
+        !in_abs(j.ang, 100.0f) || !f_finite(j.r) || !in_abs(j.phase, 100.0f) ||
+        !in_abs(j.speed_mul, 4.0f) || !f_finite(j.depth) || j.depth < 0.0f || j.depth > 1.5f ||
         j.r < 20.0f || j.r > 140.0f || j.species >= 4) {
       return 0;
     }
     for (int t = 0; t < TENTACLES_PER_JELLY; ++t) {
       Tentacle& tn = j.tentacles[t];
-      if (tn.count < 2 || tn.count > MAX_NODES || !f_finite(tn.offset) ||
+      if (tn.count < 2 || tn.count > MAX_NODES || !in_abs(tn.offset, 300.0f) ||
           !f_finite(tn.seg_len) || tn.seg_len < 2.0f || tn.seg_len > 45.0f || !f_finite(tn.phase)) {
         return 0;
       }
       for (int k = 0; k < tn.count; ++k) {
-        if (!f_finite(tn.nodes[k].x) || !f_finite(tn.nodes[k].y) ||
-            !f_finite(tn.nodes[k].ox) || !f_finite(tn.nodes[k].oy)) {
+        if (!in_x(tn.nodes[k].x) || !in_y(tn.nodes[k].y) ||
+            !in_x(tn.nodes[k].ox) || !in_y(tn.nodes[k].oy)) {
           return 0;
         }
       }
@@ -1582,13 +1609,15 @@ int sim_validate_restored() {
   }
   for (int i = 0; i < MAX_KOI; ++i) {
     Koi& k = state.koi[i];
-    if (!f_finite(k.x) || !f_finite(k.y) || !f_finite(k.ang) || !f_finite(k.turn) ||
-        !f_finite(k.speed) || !f_finite(k.length) || !f_finite(k.phase) || !f_finite(k.fin_phase) ||
+    if (!in_x(k.x) || !in_y(k.y) || !in_abs(k.ang, 100.0f) || !in_abs(k.turn, 10.0f) ||
+        !in_abs(k.speed, 20.0f) || !f_finite(k.length) || !in_abs(k.phase, 100.0f) ||
+        !in_abs(k.fin_phase, 100.0f) || !f_finite(k.depth) || k.depth < 0.0f || k.depth > 1.5f ||
+        !in_abs(k.beat, 10.0f) || !in_abs(k.gulp, 10.0f) || !in_abs(k.turn_bias, 1.0f) ||
         k.length < 60.0f || k.length > 420.0f || k.num_red > 4 || k.num_black > 6) {
       return 0;
     }
     for (int s = 0; s < KOI_NODES; ++s) {
-      if (!f_finite(k.nx[s]) || !f_finite(k.ny[s])) return 0;
+      if (!in_x(k.nx[s]) || !in_y(k.ny[s])) return 0;
     }
   }
   sim_resize(g_cols, g_rows, g_cw, g_ch);

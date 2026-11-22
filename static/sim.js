@@ -1,6 +1,6 @@
 (() => {
   const THEME_KEY = "dnex-theme";
-  const STATE_KEY = "dnex-sim-state-v6";
+  const STATE_KEY = "dnex-sim-state-v7";
   const DARK_BG = "#181715";
   const LIGHT_BG = "#f5f4f1";
   const reduceMotionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -430,6 +430,17 @@
 
   function syncTextRect() {
     if (!wasm) return;
+    const nav = document.querySelector(".site-nav");
+    if (nav && wasm.sim_set_nav_rect) {
+      // Measure the nav's links, not the full-width fixed bar
+      const items = nav.querySelectorAll("a, button");
+      if (items.length) {
+        const a = items[0].getBoundingClientRect();
+        const b = items[items.length - 1].getBoundingClientRect();
+        const top = Math.min(a.top, b.top);
+        wasm.sim_set_nav_rect(a.left, top, b.right - a.left, Math.max(a.bottom, b.bottom) - top, 1);
+      }
+    }
     const box = document.querySelector("[data-sim-soften]");
     if (!box) {
       wasm.sim_set_text_rect(0, 0, 0, 0, 0);
@@ -524,7 +535,7 @@
     const halfH = ch * 0.5;
 
     ctx.clearRect(0, 0, W, H);
-    ctx.font = `600 ${Math.round(ch * 0.72)}px "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace`;
+    ctx.font = `500 ${Math.round(ch * 0.72)}px "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 

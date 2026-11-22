@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -133,13 +134,30 @@ void write_file(const fs::path& p, std::string_view content) {
   out.write(content.data(), static_cast<std::streamsize>(content.size()));
 }
 
+// Drop a trailing YAML comment: '#' preceded by whitespace, outside quotes.
+std::string strip_comment(const std::string& line) {
+  char quote = 0;
+  for (size_t i = 0; i < line.size(); ++i) {
+    char c = line[i];
+    if (quote) {
+      if (c == '\\' && quote == '"') ++i;
+      else if (c == quote) quote = 0;
+    } else if (c == '"' || c == '\'') {
+      quote = c;
+    } else if (c == '#' && (i == 0 || line[i - 1] == ' ' || line[i - 1] == '\t')) {
+      return line.substr(0, i);
+    }
+  }
+  return line;
+}
+
 std::vector<std::string> split_lines(const std::string& text) {
   std::vector<std::string> lines;
   std::istringstream ss(text);
   std::string line;
   while (std::getline(ss, line)) {
     if (!line.empty() && line.back() == '\r') line.pop_back();
-    lines.push_back(line);
+    lines.push_back(strip_comment(line));
   }
   return lines;
 }
