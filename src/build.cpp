@@ -345,6 +345,17 @@ std::string render_page(const SiteConfig& site,
       << "    <main class=\"" << escape_html(main_class) << "\">\n"
       << body_html
       << "    </main>\n"
+      << "    <nav class=\"webring\" aria-label=\"CS Webring\">\n"
+      << "      <a class=\"webring-nav\" href=\"https://cs.uwatering.com/#" << escape_html(site.site_url)
+      << "?nav=prev\" aria-label=\"Previous site\">&larr;</a>\n"
+      << "      <a class=\"webring-home\" href=\"https://cs.uwatering.com/#" << escape_html(site.site_url)
+      << "\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"UW CS Webring\">\n"
+      << "        <img class=\"webring-mark webring-mark-on-dark\" src=\"/static/webring-white.svg\" alt=\"\" width=\"18\" height=\"18\">\n"
+      << "        <img class=\"webring-mark webring-mark-on-light\" src=\"/static/webring-black.svg\" alt=\"\" width=\"18\" height=\"18\">\n"
+      << "      </a>\n"
+      << "      <a class=\"webring-nav\" href=\"https://cs.uwatering.com/#" << escape_html(site.site_url)
+      << "?nav=next\" aria-label=\"Next site\">&rarr;</a>\n"
+      << "    </nav>\n"
       << "  </div>\n"
       << "  <script src=\"/static/sim.js\" defer></script>\n"
       << "</body>\n"
