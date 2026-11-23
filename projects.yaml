@@ -11,18 +11,6 @@ projects:
     video: /static/projects/tiramisu.mp4
     poster: /static/projects/tiramisu.jpg
 
-  - slug: buzzkill
-    title: buzzkill
-    featured: true
-    short: cv turret · hackthe6ix
-    tagline: Autonomous mosquito-tracking turret — computer vision that aims and fires.
-    stat: finalist @ hackthe6ix
-    tags: [CV, Python, hardware]
-    github: https://github.com/dnexdev/buzzkill
-    live: https://www.youtube.com/watch?v=bvb7n03Mdh0
-    video: /static/projects/buzzkill.mp4
-    poster: /static/projects/buzzkill.jpg
-
   - slug: openintern
     title: openintern
     featured: true
@@ -34,6 +22,18 @@ projects:
     live: https://openintern.dev
     video: /static/projects/openintern.mp4
     poster: /static/projects/openintern.jpg
+
+  - slug: buzzkill
+    title: buzzkill
+    featured: true
+    short: cv turret · hackthe6ix
+    tagline: Autonomous mosquito-tracking turret — computer vision that aims and fires.
+    stat: finalist @ hackthe6ix
+    tags: [CV, Python, hardware]
+    github: https://github.com/dnexdev/buzzkill
+    live: https://www.youtube.com/watch?v=bvb7n03Mdh0
+    video: /static/projects/buzzkill.mp4
+    poster: /static/projects/buzzkill.jpg
 
   - slug: mathphic
     title: mathphic

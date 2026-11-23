@@ -450,6 +450,7 @@ std::string render_projects_body(const std::vector<Project>& projects) {
   std::ostringstream out;
   out << "      <div class=\"projects-rail\" data-projects-rail tabindex=\"0\" aria-label=\"Projects\">\n";
 
+  bool first_video = true;
   for (const auto& p : projects) {
     std::string primary_href = !p.live.empty() ? p.live : p.github;
     out << "        <article class=\"project-card\" id=\"" << escape_html(p.slug) << "\">\n"
@@ -460,7 +461,10 @@ std::string render_projects_body(const std::vector<Project>& projects) {
           << escape_html(p.title) << "\">\n";
     }
     if (!p.video.empty()) {
-      out << "              <video class=\"project-media\" muted loop playsinline preload=\"metadata\" draggable=\"false\"";
+      // The first card is on screen at load, so let it buffer immediately.
+      out << "              <video class=\"project-media\" muted loop playsinline preload=\""
+          << (first_video ? "auto" : "metadata") << "\" draggable=\"false\"";
+      first_video = false;
       if (!p.poster.empty()) out << " poster=\"" << escape_html(p.poster) << "\"";
       out << " data-project-video>\n"
           << "                <source src=\"" << escape_html(p.video) << "\" type=\"video/mp4\">\n"

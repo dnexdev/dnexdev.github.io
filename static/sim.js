@@ -103,8 +103,14 @@
             const candidate = activeVideo;
             const p = candidate.play();
             if (p && typeof p.catch === "function") {
-              p.catch(() => {
-                if (activeVideo === candidate) activeVideo = null;
+              p.catch((err) => {
+                if (activeVideo !== candidate) return;
+                activeVideo = null;
+                // NotAllowedError = autoplay blocked (e.g. iOS Low Power Mode): keep the poster.
+                // Anything else (interrupted load, slow network): try again once it can play.
+                if (!err || err.name !== "NotAllowedError") {
+                  candidate.addEventListener("canplay", pickActive, { once: true });
+                }
               });
             }
           }
