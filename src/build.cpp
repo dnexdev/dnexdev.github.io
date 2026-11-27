@@ -324,6 +324,9 @@ std::string render_page(const SiteConfig& site,
       << "  <title>" << escape_html(page_title) << "</title>\n"
       << "  <meta name=\"description\" content=\"" << escape_html(site.description) << "\">\n"
       << "  <meta name=\"theme-color\" content=\"#181715\">\n"
+      << "  <link rel=\"icon\" href=\"/favicon.ico\" sizes=\"32x32\">\n"
+      << "  <link rel=\"icon\" href=\"/static/favicon.png\" type=\"image/png\" sizes=\"32x32\">\n"
+      << "  <link rel=\"apple-touch-icon\" href=\"/static/apple-touch-icon.png\">\n"
       << "  " << THEME_INIT_HEAD << "\n"
       << "  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n"
       << "  <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n"
@@ -597,6 +600,9 @@ int main() {
   write_file(stage_dir / "llms.txt", render_llms_txt(site, projects));
 
   copy_static_assets("./static", stage_dir / "static");
+  // Browsers and crawlers request /favicon.ico at the root by default.
+  fs::copy_file("./static/favicon.ico", stage_dir / "favicon.ico",
+                fs::copy_options::overwrite_existing);
 
   const fs::path backup_dir = "./.docs-old";
   if (fs::exists(backup_dir)) fs::remove_all(backup_dir);
